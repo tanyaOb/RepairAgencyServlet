@@ -1,0 +1,17 @@
+<web-app  version="3.0">
+
+    <display-name>Repair Agency</display-name>
+
+    <servlet>
+        <servlet-name>Servlet</servlet-name>
+        <servlet-class>com.project.aynat.servlet.RepairAgencyServlet.Servlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Servlet</servlet-name>
+        <url-pattern>/app/*</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>
