@@ -212,7 +212,6 @@ public class DBManager {
         ResultSet resultSet = null;
         try {
             preparedStatement = connection.prepareStatement(INSERT_INTO_USER);
-            // preparedStatement = connection.prepareStatement(INSERT_INTO_USER, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, user.getPassword());
             preparedStatement.setString(2, user.getUserName());
             preparedStatement.setInt(3, user.getUserRole());
