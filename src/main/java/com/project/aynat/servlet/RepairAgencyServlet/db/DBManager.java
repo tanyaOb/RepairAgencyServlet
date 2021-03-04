@@ -34,7 +34,8 @@ public class DBManager {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Some problem occurred with db driver", e);
+            throw new RuntimeException("Some problem occurred with db driver", e);
         }
         try {
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3307/repair_agency_servlet?useUnicode=true&serverTimezone=UTC",
@@ -42,7 +43,7 @@ public class DBManager {
                     "tanya123");
             return conn;
         } catch (SQLException throwable) {
-            LOG.error("Some problem occured during connection to db", throwable);
+            LOG.error("Some problem occurred during connection to db", throwable);
             return null;
         }
     }
@@ -51,7 +52,7 @@ public class DBManager {
         connection = getConnection();
     }
 
-    public static DBManager getInstance() {
+    public static synchronized DBManager getInstance() {
         if (instance == null) {
             instance = new DBManager();
         }
@@ -75,25 +76,12 @@ public class DBManager {
                 users.add(user);
             }
         } catch (Exception e) {
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
             return Collections.emptyList();
         } finally {
-            if (preparedstatement != null) {
-                try {
-                    preparedstatement.close();
-                } catch (SQLException ex) {
-                    LOG.error("Some problem occured while closing statement", ex);
-                }
-            }
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    LOG.error("Some problem occured while closing result set", e);
-                }
-            }
+            close(preparedstatement);
+            close(resultSet);
         }
-
         return users;
     }
 
@@ -123,7 +111,8 @@ public class DBManager {
             LOG.error("Some problem occured during db statement", e);
             return Collections.emptyList();
         } finally {
-            finallyBlockMethod2(statement, resultSet);
+            close(statement);
+            close(resultSet);
         }
         return orders;
     }
@@ -152,7 +141,8 @@ public class DBManager {
             LOG.error("Some problem occured during db statement", e);
             return Collections.emptyList();
         } finally {
-            finallyBlockMethod2(preparedstatement, resultSet);
+            close(preparedstatement);
+            close(resultSet);
         }
         return orders;
     }
@@ -185,7 +175,8 @@ public class DBManager {
             LOG.error("Some problem occured during db statement", e);
             return Collections.emptyList();
         } finally {
-            finallyBlockMethod2(preparedstatement, resultSet);
+            close(preparedstatement);
+            close(resultSet);
         }
         return orders;
     }
@@ -207,46 +198,43 @@ public class DBManager {
                 user.setUserRole(resultSet.getInt("user_role"));
             }
         } catch (SQLException e) {
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
+            return null;
         } finally {
-            finallyBlockMethod2(preparedStatement, resultSet);
+            close(preparedStatement);
+            close(resultSet);
         }
         return user;
     }
 
-    //TODO registration form
     public boolean insertUser(AgencyUser user) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
-            preparedStatement = connection.prepareStatement(INSERT_INTO_USER, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement(INSERT_INTO_USER);
+            // preparedStatement = connection.prepareStatement(INSERT_INTO_USER, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, user.getPassword());
             preparedStatement.setString(2, user.getUserName());
             preparedStatement.setInt(3, user.getUserRole());
             if (preparedStatement.executeUpdate() != 1) {
                 return false;
             }
-            resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                Long idField = resultSet.getLong(1);
-                user.setId(idField);
-            }
         } catch (Exception e) {
             LOG.error("Some problem occured during db statement", e);
             return false;
         } finally {
-            finallyBlockMethod(preparedStatement, resultSet);
+            close(preparedStatement);
+            close(resultSet);
         }
         return true;
     }
 
     public boolean insertOrder(Order order, String username) throws SQLException {
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         connection.setAutoCommit(false);
         try {
             AgencyUser user = getUser(username);
-            preparedStatement = connection.prepareStatement(INSERT_INTO_ORDER, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement(INSERT_INTO_ORDER);
             preparedStatement.setObject(1, order.getCategory());
             preparedStatement.setString(2, order.getDescription());
             preparedStatement.setString(3, order.getModelOrder());
@@ -254,18 +242,13 @@ public class DBManager {
             if (preparedStatement.executeUpdate() != 1) {
                 return false;
             }
-            resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
-                Long idField = resultSet.getLong(1);
-                order.setId(idField);
-            }
             connection.commit();
         } catch (Exception e) {
             connection.rollback();
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
             return false;
         } finally {
-            finallyBlockMethod(preparedStatement, resultSet);
+            close(preparedStatement);
         }
         return true;
     }
@@ -280,16 +263,10 @@ public class DBManager {
                 return false;
             }
         } catch (Exception e) {
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
             return false;
         } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException ex) {
-                    LOG.error("Some problem occured while closing preparedStatement", ex);
-                }
-            }
+            close(preparedStatement);
         }
         return true;
     }
@@ -304,17 +281,10 @@ public class DBManager {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
             return false;
         } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException ex) {
-                    LOG.error("Some problem occured while closing preparedStatement", ex);
-                }
-            }
+            close(preparedStatement);
         }
         return true;
     }
@@ -329,17 +299,10 @@ public class DBManager {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
             return false;
         } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException ex) {
-                    LOG.error("Some problem occured while closing preparedStatement", ex);
-                }
-            }
+            close(preparedStatement);
         }
         return true;
     }
@@ -354,17 +317,10 @@ public class DBManager {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
             return false;
         } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException ex) {
-                    LOG.error("Some problem occured while closing preparedStatement", ex);
-                }
-            }
+            close(preparedStatement);
         }
         return true;
     }
@@ -394,10 +350,11 @@ public class DBManager {
             connection.commit();
         } catch (Exception e) {
             connection.rollback();
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
             return false;
         } finally {
-            finallyBlockMethod(preparedStatement, resultSet);
+            close(preparedStatement);
+            close(resultSet);
         }
         return true;
     }
@@ -417,51 +374,30 @@ public class DBManager {
             connection.commit();
         } catch (Exception e) {
             connection.rollback();
-            e.printStackTrace();
-            LOG.error("Some problem occured during db statement", e);
+            LOG.error("Some problem occurred during db statement", e);
             return false;
         } finally {
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException ex) {
-                    LOG.error("Some problem occured while closing preparedStatement", ex);
-                }
-            }
+            close(preparedStatement);
         }
         return true;
     }
 
-    private void finallyBlockMethod(PreparedStatement preparedStatement, ResultSet resultSet) {
-        if (preparedStatement != null) {
+    private void close(Statement stmt) {
+        if (stmt != null) {
             try {
-                preparedStatement.close();
+                stmt.close();
             } catch (SQLException ex) {
-                LOG.error("Some problem occured while closing preparedStatement", ex);
-            }
-        }
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                LOG.error("Some problem occured while closing resultSet", e);
+                LOG.error("Some problem occurred while closing statement", ex);
             }
         }
     }
 
-    private void finallyBlockMethod2(Statement statement, ResultSet resultSet) {
-        if (statement != null) {
+    private void close(ResultSet rs) {
+        if (rs != null) {
             try {
-                statement.close();
+                rs.close();
             } catch (SQLException ex) {
-                LOG.error("Some problem occured while closing statement", ex);
-            }
-        }
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                LOG.error("Some problem occured while closing resultSet", e);
+                LOG.error("Some problem occurred while closing resultSet", ex);
             }
         }
     }

@@ -23,21 +23,21 @@
                 <th>Change status</th>
                 <th>Assign price</th>
             </tr>
-            <c:forEach var = "order" items="${orders}">
+            <c:forEach var="order" items="${orders}">
                 <tr>
                     <td>${order.category}</td>
                     <td>${order.description}</td>
                     <td>${order.modelOrder}</td>
                     <td>${order.stateMaster}</td>
                     <td>${order.orderPrice}</td>
-                    <td><a href="${pageContext.request.contextPath}/app/changeprogresstatus?orderId=${order.id}&name=${name}">Change</a></td>
-                    <td><a href="${pageContext.request.contextPath}/app/assignprice?orderId=${order.id}&name=${name}">Assign</a></td>
+                    <td><a href="app?command=changeprogresstatus&orderId=${order.id}&name=${name}">Change</a></td>
+                    <td><a href="app?command=assignprice&orderId=${order.id}&name=${name}">Assign</a></td>
                 </tr>
             </c:forEach>
         </table>
     </c:otherwise>
 </c:choose>
 <br>
-<a href="${pageContext.request.contextPath}/app/logout">Sign out</a>
+<a href="app?command=logout">Sign out</a>
 </body>
 </html>

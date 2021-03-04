@@ -6,7 +6,7 @@
 <body>
 <div>
     <h2>Please change payment status</h2>
-    <form action="${pageContext.request.contextPath}/app">
+    <form method="post" action="${pageContext.request.contextPath}/app">
         <input type="hidden" name="command" value="changepaymentstatus"/>
         <input type="hidden" name="orderPrice" value="${orderPrice}"/>
         <input type="hidden" name="orderId" value="${orderId}"/>
@@ -19,9 +19,8 @@
         <div><input type="submit" value="Save"/></div>
     </form>
 </div>
-<br>
 <h3>${message}</h3>
 <br>
-<a href="${pageContext.request.contextPath}/app/manageorders">Back to list of orders</a>
+<a href="app?command=manageorders">Back to list of orders</a>
 </body>
 </html>

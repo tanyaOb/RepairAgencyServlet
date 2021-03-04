@@ -15,7 +15,8 @@ public class ManagerManageAccounts implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         List<ClientOrder> orders = dbManager.findAllClientsOrders();
-        request.setAttribute("orders", orders);
+        List<AgencyUser> users = dbManager.findAllByRole(0); //client
+        request.setAttribute("users", users);
         return "/manager/manageuseraccounts.jsp";
     }
 }

@@ -17,10 +17,14 @@ public class MasterAssignPrice implements Command {
         String orderId = request.getParameter("orderId");
         request.setAttribute("name", username);
         request.setAttribute("orderId", orderId);
-        if (!(price == null)) {
+        if (price != null) {
+            if (Integer.parseInt(price) < 0) {
+                request.setAttribute("message", "Price should be a positive number");
+                return "/master/assignprice.jsp?";
+            }
             Order order = new Order();
             order.setId(Long.valueOf(orderId));
-            order.setOrderPrice(Integer.valueOf(price));
+            order.setOrderPrice(Integer.parseInt(price));
             boolean status = dbManager.updateOrderMasterPrice(order);
             if (status) {
                 request.setAttribute("message", "Price successfully assigned");

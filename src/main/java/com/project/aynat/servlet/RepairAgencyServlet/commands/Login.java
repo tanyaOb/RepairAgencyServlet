@@ -4,15 +4,12 @@ import com.project.aynat.servlet.RepairAgencyServlet.db.DBManager;
 import com.project.aynat.servlet.RepairAgencyServlet.db.domain.AgencyUser;
 import com.project.aynat.servlet.RepairAgencyServlet.db.domain.Role;
 import com.project.aynat.servlet.RepairAgencyServlet.exception.AppException;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class Login implements Command {
-
-    private static final Logger LOG = Logger.getLogger(Login.class);
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws AppException {
@@ -24,15 +21,10 @@ public class Login implements Command {
         HttpSession session = request.getSession();
         DBManager dbManager = DBManager.getInstance();
 
-        if (username.isEmpty() || password.isEmpty()) {
-            throw new AppException("Login/password cannot be empty");
-        }
-
         AgencyUser user = dbManager.getUser(username);
-        LOG.trace("Found in DB: user --> " + user);
-
         if (user == null || !password.equals(user.getPassword())) {
-            throw new AppException("Cannot find user with such login/password");
+            request.setAttribute("message", "Cannot find user with such login/password");
+            return "/login.jsp";
         }
 
         Role userRole = Role.getRole(user);

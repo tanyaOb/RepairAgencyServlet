@@ -21,17 +21,20 @@ public class ClientNewOrder implements Command {
         String category = request.getParameter("category");
         String description = request.getParameter("description");
         String model = request.getParameter("modelOrder");
-        Order order = new Order();
-        order.setCategory(category);
-        order.setDescription(description);
-        order.setModelOrder(model);
-        List<Category> categoryList = Arrays.asList(Category.values());
-        request.setAttribute("categoryList", categoryList);
-        boolean status = dbManager.insertOrder(order, username);
-        if (status) {
-            request.setAttribute("message", "Order is saved");
-        } else {
-            request.setAttribute("message", "some problem");
+        if (!model.isEmpty() && !category.isEmpty()) {
+            Order order = new Order();
+            order.setCategory(category);
+            order.setDescription(description);
+            order.setModelOrder(model);
+            List<Category> categoryList = Arrays.asList(Category.values());
+            request.setAttribute("categoryList", categoryList);
+
+            boolean status = dbManager.insertOrder(order, username);
+            if (status) {
+                request.setAttribute("message", "Order is saved");
+            } else {
+                request.setAttribute("message", "some problem");
+            }
         }
         return "/client/neworder.jsp?name=" + username + "";
     }

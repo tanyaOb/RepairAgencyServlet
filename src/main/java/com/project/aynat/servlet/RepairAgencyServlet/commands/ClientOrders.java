@@ -15,13 +15,15 @@ public class ClientOrders implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String username = request.getParameter("name");
-        List<ClientOrder> orders = dbManager.findAllOrdersByClientId(username);
-        Integer balance = orders.get(0).getAccount();
-        request.setAttribute("orders", orders);
-        request.setAttribute("name", username);
-        request.setAttribute("balance", balance);
         HttpSession session = request.getSession();
         session.setAttribute("name", username);
+        List<ClientOrder> orders = dbManager.findAllOrdersByClientId(username);
+        if (orders.size() != 0) {
+            Integer balance = orders.get(0).getAccount();
+            request.setAttribute("orders", orders);
+            request.setAttribute("balance", balance);
+        }
+        request.setAttribute("name", username);
         return "/client/myorder.jsp?name=" + username + "";
     }
 }

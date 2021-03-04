@@ -21,7 +21,7 @@ public class MasterProgressStatus implements Command {
             Order order = new Order();
             order.setId(Long.valueOf(orderId));
             order.setStateMaster(progressStatus);
-            Boolean status = dbManager.updateOrderMasterState(order);
+            boolean status = dbManager.updateOrderMasterState(order);
             if (status) {
                 request.setAttribute("message", "Status successfully changed");
             } else {

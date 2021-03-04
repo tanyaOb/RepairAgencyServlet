@@ -10,7 +10,7 @@
 <body>
 <h2>User's accounts</h2>
 <c:choose>
-    <c:when test="${fn:length(orders) == 0}">No orders yet</c:when>
+    <c:when test="${fn:length(users) == 0}">No users yet</c:when>
 
     <c:otherwise>
         <table class="table table-striped" border=1 bordercolor="#000000" cellpadding=10>
@@ -19,17 +19,17 @@
                 <th>Account balance</th>
                 <th>Refill balance</th>
             </tr>
-            <c:forEach var = "order" items="${orders}">
+            <c:forEach var="user" items="${users}">
                 <tr>
-                    <td>${order.userName}</td>
-                    <td>${order.account}</td>
-                    <td><a href="${pageContext.request.contextPath}/app/addmoney?name=${order.userName}">Change</a></td>
+                    <td>${user.userName}</td>
+                    <td>${user.account}</td>
+                    <td><a href="app?command=addmoney&name=${user.userName}">Change</a></td>
                 </tr>
             </c:forEach>
         </table>
     </c:otherwise>
 </c:choose>
 <br>
-<a href="${pageContext.request.contextPath}/app/manageorders">Back to list of orders</a>
+<a href="app?command=manageorders">Back to list of orders</a>
 </body>
 </html>

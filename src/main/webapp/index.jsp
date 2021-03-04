@@ -1,13 +1,13 @@
 <html>
 <body>
 <h2>
-    Welcome to repair agency !
+    Welcome to repair agency!
 </h2>
 
 <br/>
-<a href="${pageContext.request.contextPath}/app/login">Login</a><br>
+<a href="app?command=login">Login</a><br>
 <p></p>
-<a href="${pageContext.request.contextPath}/app/registration">Registration</a>
+<a href="app?command=registration">Registration</a><br>
 <br>
 
 </body>

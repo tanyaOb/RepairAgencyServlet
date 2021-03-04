@@ -9,7 +9,7 @@
 <body>
 <div>
     <h2>Create new order</h2>
-    <form action="${pageContext.request.contextPath}/app">
+    <form method="post" action="${pageContext.request.contextPath}/app">
         <input type="hidden" name="command" value="neworder"/>
         <input type="hidden" name="name" value="${name}"/>
         <select name="category">
@@ -27,8 +27,7 @@
     </form>
 </div>
 <h3>${message}</h3>
-<a href="${pageContext.request.contextPath}/app/myorder?name=${name}">My orders</a>
-<br><p></p>
-<a href="${pageContext.request.contextPath}/app/logout">Sign out</a>
+<br>
+<a href="${pageContext.request.contextPath}/app/myorder?name=${name}&command=myorder">Back to list of my orders</a>
 </body>
 </html>

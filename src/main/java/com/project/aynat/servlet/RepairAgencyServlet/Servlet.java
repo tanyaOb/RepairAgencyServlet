@@ -17,8 +17,10 @@ public class Servlet extends HttpServlet {
 
     public void init() {
         //common commands
-        commands.put("login", new Login());
         commands.put("logout", new Logout());
+
+        //out of control commands
+        commands.put("login", new Login());
         commands.put("registration", new Registration());
 
         //client commands

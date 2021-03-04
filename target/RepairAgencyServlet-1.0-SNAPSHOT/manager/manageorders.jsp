@@ -26,7 +26,7 @@
                 <th>Change status</th>
                 <th>Choose master</th>
             </tr>
-            <c:forEach var = "order" items="${orders}">
+            <c:forEach var="order" items="${orders}">
                 <tr>
                     <td>${order.userName}</td>
                     <td>${order.category}</td>
@@ -36,16 +36,20 @@
                     <td>${order.stateMaster}</td>
                     <td>${order.orderPrice}</td>
                     <td>${order.masterId}</td>
-                    <td><a href="${pageContext.request.contextPath}/app/changepaymentstatus?orderId=${order.id}&orderPrice=${order.orderPrice}">Change</a></td>
-                    <td><a href="${pageContext.request.contextPath}/app/choosemaster?orderId=${order.id}">Choose</a></td>
+                    <td><a href="app?command=changepaymentstatus&orderId=${order.id}&orderPrice=${order.orderPrice}">Change</a>
+                    </td>
+                    <td><a href="app?command=choosemaster&orderId=${order.id}&orderPrice=${order.orderPrice}">Choose</a>
+                    </td>
+
                 </tr>
             </c:forEach>
         </table>
     </c:otherwise>
 </c:choose>
 <br>
-<a href="${pageContext.request.contextPath}/app/manageuseraccounts">Manage user accounts</a>
-<br><p></p>
-<a href="${pageContext.request.contextPath}/app/logout">Sign out</a>
+<a href="app?command=manageuseraccounts">Manage user accounts</a>
+<br>
+<p></p>
+<a href="app?command=logout">Sign out</a>
 </body>
 </html>
